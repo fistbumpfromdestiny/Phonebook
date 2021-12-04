@@ -2,53 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct linkedList{
+struct Node{
     char name[50];
-    char number[10];
-    struct linkedList *parent;
-    struct linkedList *leftChild;
-    struct linkedList *rightChild;
-};
+    char number[11];
+    struct Node *parent;
+    struct Node *leftChild;
+    struct Node *rightChild;
+}*root = NULL;
 
-typedef struct linkedList *node;
+typedef struct Node *node;
 
 node createNode(){
-    node temp;
-    temp = (node)malloc(sizeof(struct linkedList));
-    temp->parent = NULL;
-    temp->leftChild = NULL;
-    temp->rightChild = NULL;
+    node temp = (node)malloc(sizeof(struct Node));
+    temp->parent = temp->leftChild = temp->rightChild = NULL;
     return temp;
 }
 
-void searchTree(node head, char *name){
 
-
-}
-
-node addNode(char *name, char *number, node head){
-    node temp, p;
-
-    temp = createNode();
-    for(int i = 0; i < strlen(name); i++)
-        temp->name[i] = name[i];
-    for(int i = 0; i < strlen(number); i++)
-        temp->number[i] = number[i];
+void sortedPrint(node p){
     
-
-    if(!head){
-        head = temp;
-    }else{
-        p = head;
-        while(p->next){
-            p = p->next;
-        }
-        p->next = temp;
+    if(p){
+        sortedPrint(p->leftChild);
+        printf("%s\n%s\n", p->name, p->number);
+        sortedPrint(p->rightChild);     
     }
-    return head;
 }
 
-int main(void) {
 
+void insertNode(char *name, char *number){
+    
+    node temp = root;
+    node tail, new;
+
+    if(!root) { 
+        new = createNode();
+        strcpy(new->name, name);
+        strcpy(new->number, number);
+        root = new;
+        return;
+    }
+    while (temp) {
+        tail = temp;
+        if(strcmp(name, temp->name) < 0) temp = temp->leftChild;
+        else if(strcmp(name, temp->name) > 0) temp = temp->rightChild; 
+        else return;
+    }
+    
+    new = createNode();
+    strcpy(new->name, name);
+    strcpy(new->number, number);
+
+    if(strcmp(name, tail->name) < 0) tail->leftChild = new;
+    else tail->rightChild = new;
+}
+
+
+int main(void) {  
+
+    char name[50];
+    char num[11];
+
+    
+    insertNode("aaaa", "1080");
+    insertNode("bbbb", "1080");
+    insertNode("zzzz", "2080");
+    insertNode("aaa", "3080");
+    insertNode("kkkk", "4080");
+   
+    sortedPrint(root);
+    printf("\n");
+   
     return 0;
 }
