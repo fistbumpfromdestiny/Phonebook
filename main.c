@@ -21,6 +21,11 @@ node createNode(){
     return temp;
 }
 
+void searchTree(node head, char *name){
+
+
+}
+
 node addNode(char *name, char *number, node head){
     node temp, p;
 
