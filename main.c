@@ -18,7 +18,6 @@ node createNode(){
     return temp;
 }
 
-
 void sortedPrint(node p){
     
     if(p){
@@ -27,7 +26,6 @@ void sortedPrint(node p){
         sortedPrint(p->rightChild);     
     }
 }
-
 
 void insertNode(char *name, char *number){
     
@@ -56,21 +54,60 @@ void insertNode(char *name, char *number){
     else tail->rightChild = new;
 }
 
+node searchRecords(char *name) {
+    node temp = root;
+    while(temp){
+        if(strcmp(name, temp->name) == 0) return temp;
+        else if(strcmp(name, temp->name) < 0) temp = temp->leftChild;
+        else temp = temp->rightChild; 
+    }
+    return NULL;
+}
+
 
 int main(void) {  
 
     char name[50];
     char num[11];
 
+    int choice;
     
-    insertNode("aaaa", "1080");
-    insertNode("bbbb", "1080");
-    insertNode("zzzz", "2080");
-    insertNode("aaa", "3080");
-    insertNode("kkkk", "4080");
-   
-    sortedPrint(root);
-    printf("\n");
-   
+    while(1){
+        printf("1. Insert record.\n");
+        printf("2. Print records.\n");
+        printf("3. Search records.\n");
+        printf("4. Exit\n");
+
+        scanf(" %d", &choice);
+        while ((getchar()) != '\n');
+        switch(choice){
+            case(1):
+                printf("Enter name: ");
+                fgets(name, 50, stdin);
+                name[strcspn(name, "\n")] = 0;
+                printf("Enter number: ");
+                fgets(num, 11, stdin);
+                num[strcspn(num, "\n")] = 0;
+                insertNode(name, num);
+                break;
+            case(2):
+                printf("Printing records.\n");
+                sortedPrint(root);
+                break;
+            case(3):
+                printf("Enter name to search for: ");
+                fgets(name, 50, stdin);
+                name[strcspn(name, "\n")] = 0;
+                node temp = searchRecords(name); 
+                if(temp) {
+                    printf("Record found.\n");
+                    printf("%s\n%s\n",temp->name, temp->number);
+                } else printf("Record not found.\n");
+                break;
+            case(4):
+                free(root);
+                exit(1);
+        }
+    }
     return 0;
 }
