@@ -54,6 +54,56 @@ void insertNode(char *name, char *number){
     else tail->rightChild = new;
 }
 
+int calcHeight(node temp) {
+
+    int leftHeight, rightHeight;
+    if(!temp) return 0;
+    calcHeight(temp->leftChild);
+    calcHeight(temp->rightChild);
+    if(leftHeight > rightHeight) return leftHeight + 1;
+    else return rightHeight +1;
+}
+
+node predecessor(node temp) {
+
+    while(temp && temp->rightChild) temp = temp->rightChild;
+    return temp;
+}
+
+node successor(node temp) {
+
+    while(temp && temp->leftChild) temp = temp->leftChild;
+    return temp;
+}
+
+node deleteRecord(node p, char *name) {
+    node temp;
+
+    if(!p) return NULL;
+    if(!p->leftChild && !p->rightChild) {
+        if(p == root) root = NULL;
+        free(p);
+        return NULL;
+    }   
+
+    if (strcmp(name, p->name) < 0) p->leftChild = deleteRecord(p->leftChild, name);
+    else if (strcmp(name, p->name) > 0) p->rightChild = deleteRecord(p->rightChild, name);
+    else {
+        if(calcHeight(p->leftChild) > calcHeight(p->rightChild)){
+            temp = predecessor(p->leftChild);
+            strcpy(p->name, temp->name);
+            strcpy(p->number, temp->number);
+            p->leftChild = deleteRecord(p->leftChild, temp->name);
+        } else {
+            temp = successor(p->rightChild);
+            strcpy(p->name, temp->name);
+            strcpy(p->number, temp->number);
+            p->rightChild = deleteRecord(p->rightChild, temp->name);
+        }
+    }
+    return p;
+}
+
 node searchRecords(char *name) {
     node temp = root;
     while(temp){
@@ -69,6 +119,7 @@ int main(void) {
 
     char name[50];
     char num[11];
+    node temp;
 
     int choice;
     
@@ -76,7 +127,8 @@ int main(void) {
         printf("1. Insert record.\n");
         printf("2. Print records.\n");
         printf("3. Search records.\n");
-        printf("4. Exit\n");
+        printf("4. Delete records.\n");
+        printf("5. Exit\n");
 
         scanf(" %d", &choice);
         while ((getchar()) != '\n');
@@ -98,13 +150,21 @@ int main(void) {
                 printf("Enter name to search for: ");
                 fgets(name, 50, stdin);
                 name[strcspn(name, "\n")] = 0;
-                node temp = searchRecords(name); 
+                temp = searchRecords(name); 
                 if(temp) {
                     printf("Record found.\n");
                     printf("%s\n%s\n",temp->name, temp->number);
                 } else printf("Record not found.\n");
                 break;
             case(4):
+                printf("Enter name to delete: ");
+                fgets(name, 50, stdin);
+                name[strcspn(name, "\n")] = 0;
+                temp = deleteRecord(root, name); 
+                if(!temp) printf("Record not found.\n");
+                else printf("Record deleted.\n");
+                break;
+            case(5):
                 free(root);
                 exit(1);
         }
