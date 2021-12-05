@@ -3,9 +3,9 @@
 #include <string.h>
 
 struct Node{
+
     char name[50];
     char number[11];
-    struct Node *parent;
     struct Node *leftChild;
     struct Node *rightChild;
 }*root = NULL;
@@ -13,16 +13,17 @@ struct Node{
 typedef struct Node *node;
 
 node createNode(){
+
     node temp = (node)malloc(sizeof(struct Node));
-    temp->parent = temp->leftChild = temp->rightChild = NULL;
+    temp->leftChild = temp->rightChild = NULL;
     return temp;
 }
 
 void sortedPrint(node p){
-    
+
     if(p){
         sortedPrint(p->leftChild);
-        printf("%s\n%s\n", p->name, p->number);
+        printf("Name: %sNumber: %s\n", p->name, p->number);
         sortedPrint(p->rightChild);     
     }
 }
@@ -77,6 +78,7 @@ node successor(node temp) {
 }
 
 node deleteRecord(node p, char *name) {
+
     node temp;
 
     if(!p) return NULL;
@@ -86,8 +88,10 @@ node deleteRecord(node p, char *name) {
         return NULL;
     }   
 
-    if (strcmp(name, p->name) < 0) p->leftChild = deleteRecord(p->leftChild, name);
-    else if (strcmp(name, p->name) > 0) p->rightChild = deleteRecord(p->rightChild, name);
+    if (strcmp(name, p->name) < 0) p->leftChild = 
+            deleteRecord(p->leftChild, name);
+    else if (strcmp(name, p->name) > 0) p->rightChild = 
+            deleteRecord(p->rightChild, name);
     else {
         if(calcHeight(p->leftChild) > calcHeight(p->rightChild)){
             temp = predecessor(p->leftChild);
@@ -105,7 +109,9 @@ node deleteRecord(node p, char *name) {
 }
 
 node searchRecords(char *name) {
+
     node temp = root;
+    
     while(temp){
         if(strcmp(name, temp->name) == 0) return temp;
         else if(strcmp(name, temp->name) < 0) temp = temp->leftChild;
@@ -115,15 +121,38 @@ node searchRecords(char *name) {
 }
 
 
-int main(void) {  
+int main(int argc, char **argv) {  
 
+    
     char name[50];
     char num[11];
+    
     node temp;
+
+    if(argc > 1) {
+        FILE *file;
+        file = fopen(argv[1], "r");
+        if(!file) {
+            printf("Failed to open file \"%s\".\n", argv[1]);
+            return -1;
+        }
+        char buf[2];
+        while(!feof(file)) {
+            fgets(name, sizeof(name), file);
+            fgets(num, sizeof(num), file);
+            if(name[0] != '\r' && name[0] != '\n'
+            && num[0] != '\r' && num[0] != '\n')
+            insertNode(name, num);
+
+        }
+        fclose(file);
+        
+    }
 
     int choice;
     
     while(1){
+        printf("\n");
         printf("1. Insert record.\n");
         printf("2. Print records.\n");
         printf("3. Search records.\n");
@@ -160,9 +189,7 @@ int main(void) {
                 printf("Enter name to delete: ");
                 fgets(name, 50, stdin);
                 name[strcspn(name, "\n")] = 0;
-                temp = deleteRecord(root, name); 
-                if(!temp) printf("Record not found.\n");
-                else printf("Record deleted.\n");
+                root = deleteRecord(root, name); 
                 break;
             case(5):
                 free(root);
