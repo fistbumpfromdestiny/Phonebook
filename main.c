@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct Node{
 
@@ -51,7 +52,8 @@ void insertNode(char *name, char *number){
     strcpy(new->name, name);
     strcpy(new->number, number);
 
-    if(strcmp(name, tail->name) < 0) tail->leftChild = new;
+    if(strcmp(name, tail->name) < 0) 
+        tail->leftChild = new;
     else tail->rightChild = new;
 }
 
@@ -114,18 +116,35 @@ node searchRecords(char *name) {
     
     while(temp){
         if(strcmp(name, temp->name) == 0) return temp;
-        else if(strcmp(name, temp->name) < 0) temp = temp->leftChild;
+        else if(strcmp(name, temp->name) < 0) temp = temp->leftChild;   
         else temp = temp->rightChild; 
     }
     return NULL;
 }
 
+void printTree(char *prefix, node head, bool isLeft) {
+
+    node temp = head;
+
+    while(temp) {
+    
+        printf("%s", prefix);
+        printf("%s", isLeft ? "|-" : "|_");
+        printf("%s", temp->name);
+        printTree(isLeft ? "   " : "|   ", temp->leftChild, true);
+        printTree(isLeft ? "   " : "|   ", temp->rightChild, false);
+        return;
+    }
+
+}
 
 int main(int argc, char **argv) {  
 
     
     char name[50];
     char num[11];
+    char *prefix = "";
+    bool isLeft = false;
     
     node temp;
 
@@ -157,7 +176,8 @@ int main(int argc, char **argv) {
         printf("2. Print records.\n");
         printf("3. Search records.\n");
         printf("4. Delete records.\n");
-        printf("5. Exit\n");
+        printf("5. Print tree.\n");
+        printf("6. Exit\n");
 
         scanf(" %d", &choice);
         while ((getchar()) != '\n');
@@ -165,7 +185,6 @@ int main(int argc, char **argv) {
             case(1):
                 printf("Enter name: ");
                 fgets(name, 50, stdin);
-                name[strcspn(name, "\n")] = 0;
                 printf("Enter number: ");
                 fgets(num, 11, stdin);
                 num[strcspn(num, "\n")] = 0;
@@ -192,6 +211,9 @@ int main(int argc, char **argv) {
                 root = deleteRecord(root, name); 
                 break;
             case(5):
+                printTree(prefix, root, isLeft);
+                break;
+            case(6):
                 free(root);
                 exit(1);
         }
