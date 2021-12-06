@@ -122,28 +122,33 @@ node searchRecords(char *name) {
     return NULL;
 }
 
-void printTree(char *prefix, node head, bool isLeft) {
+void printTree(char *indentation, node head, bool isRight) {
 
-    node temp = head;
-
-    while(temp) {
-    
-        printf("%s", prefix);
-        printf("%s", isLeft ? "|-" : "|_");
-        printf("%s", temp->name);
-        printTree(isLeft ? "   " : "|   ", temp->leftChild, true);
-        printTree(isLeft ? "   " : "|   ", temp->rightChild, false);
-        return;
+    if(!head) {
+    printf("%s", indentation);
+    printf("%s\n", isRight ? "└<─ *" : "└>─ *");
+    return;
     }
-
-}
+    char *newindent = (char*) malloc(256 * sizeof(char));
+    //Print indention + the token
+    printf("%s", indentation);
+    if(head == root) printf("└── %s", head->name);
+    else printf("%s%s", isRight ? "└<─ " : "└>─ ", head->name);
+    
+    //Write the new indention to the buffer
+    sprintf(newindent, "%s%s", indentation, (isRight ? "│  " : " "));
+    printTree(newindent, head->rightChild, true);
+    printTree(newindent, head->leftChild, false);
+   
+    free(newindent);
+    }
 
 int main(int argc, char **argv) {  
 
     
     char name[50];
     char num[11];
-    char *prefix = "";
+    
     bool isLeft = false;
     
     node temp;
@@ -207,11 +212,10 @@ int main(int argc, char **argv) {
             case(4):
                 printf("Enter name to delete: ");
                 fgets(name, 50, stdin);
-                name[strcspn(name, "\n")] = 0;
                 root = deleteRecord(root, name); 
                 break;
             case(5):
-                printTree(prefix, root, isLeft);
+                printTree("", root, isLeft);
                 break;
             case(6):
                 free(root);
