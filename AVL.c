@@ -3,16 +3,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include "main.h"
-
-struct Node{
-    char name[50];
-    char number[11];
-    int height;
-    struct Node *leftChild;
-    struct Node *rightChild;
-}*root = NULL;
+#include "rotate.h"
 
 typedef struct Node *node;
+node root = NULL;
 
 node createNode(){
 
@@ -25,8 +19,8 @@ void sortedPrint(node p){
 
     if(p){
         sortedPrint(p->leftChild);
-        printf("Name: %sNumber: %s Height: %d\n", 
-            p->name, p->number, p->height);
+        printf("Name: %sNumber: %s\n\n", 
+            p->name, p->number);
         sortedPrint(p->rightChild);     
     }
 }
@@ -42,76 +36,10 @@ int height(node p) {
     return left > right ? (left + 1) : (right + 1);
 }
 
-node llRotate(node p) {
-    node p_l = p->leftChild;
-    node p_lr = p_l->rightChild;
-
-    p_l->rightChild = p;
-    p->leftChild = p_lr;
-    p->height = height(p);
-    p_l->height = height(p_l);
-
-    if(root == p) root = p_l;
-    return p_l;  
-}
-
-node lrRotate(node p) { 
-    node p_l = p->leftChild;
-    node p_lr = p_l->rightChild;
-
-    p_l->rightChild = p_lr->leftChild;
-    p->leftChild = p_lr->rightChild;
-
-    p_lr->leftChild = p_l;
-    p_lr->rightChild = p;
-    
-    p->height = height(p);
-    p_l->height = height(p_l);
-    p_lr->height = height(p_lr);
-
-    if(root == p) 
-        root = p_lr;
-    return p_lr; 
-}
-
-node rrRotate(node p) {
-    node p_r = p->rightChild;
-    node p_rl = p_r->leftChild;
-
-    p_r->leftChild = p;
-    p->rightChild = p_rl;
-    p->height = height(p);
-    p_r->height = height(p_r);
-
-    if(root == p) root = p_r;
-    return p_r;  
-}
-
-
-node rlRotate(node p) {
-    node right = p-> rightChild;
-    node rightleft = right->leftChild;
-
-    right->rightChild = rightleft->rightChild;
-    p->rightChild = rightleft->leftChild;
-
-    rightleft->rightChild = right;
-    rightleft->leftChild = p;
-    p->height = height(p);
-    right->height = height(right);
-    rightleft->height = height(rightleft);
-
-    if(root == p) 
-        root = rightleft;
-    return rightleft;
-    }
-
 node insertNode(char *name, char *number, node p){
     
-    node new = NULL;
-
     if(!p) { 
-        new = createNode();
+        node new = createNode();
         strcpy(new->name, name);
         strcpy(new->number, number);
         new->height = 1;
@@ -122,7 +50,7 @@ node insertNode(char *name, char *number, node p){
         p->leftChild = insertNode(name, number, p->leftChild);
     else if(strcmp(name, p->name) > 0)  
         p->rightChild = insertNode(name, number, p->rightChild);
-    // Updates the height of every node during returning time. 
+    // Updates the height of every node during return time. 
     // p's height will be equal to the greatest height of either
     // left or right subtree.
     p->height = height(p);
@@ -150,7 +78,8 @@ node insertNode(char *name, char *number, node p){
 }
 
 int calcHeight(node p) {
-
+    // Move through subtrees till we hit null and 
+    // count the height while returning.
     int left, right;
     if(!p) return 0;
     left = calcHeight(p->leftChild);
@@ -264,10 +193,14 @@ int main(int argc, char **argv) {
             return -1;
         }
     
-        while(fgets(name, sizeof(name), file) != NULL){
-              fgets(num, sizeof(num), file);
-              root = insertNode(name, num, root);
-        }
+    while(!feof(file)) {
+        fgets(name, sizeof(name), file);
+        fgets(num, sizeof(num), file);
+        if(name[0] != '\r' && name[0] != '\n'
+        && num[0] != '\r' && num[0] != '\n')
+        
+        root = insertNode(name, num, root);
+      }
         fclose(file);   
     }
 
