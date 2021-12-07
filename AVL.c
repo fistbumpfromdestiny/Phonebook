@@ -16,7 +16,8 @@ node createNode(){
 }
 
 void sortedPrint(node p){
-
+    // Traverse through tree and print the tree's data,
+    // bottom up, from left node to right node.
     if(p){
         sortedPrint(p->leftChild);
         printf("Name: %sNumber: %s\n\n", 
@@ -37,7 +38,8 @@ int height(node p) {
 }
 
 node insertNode(char *name, char *number, node p){
-    
+    // If root is NULL, create a new node and set it's
+    // height to 1. 
     if(!p) { 
         node new = createNode();
         strcpy(new->name, name);
@@ -99,6 +101,7 @@ int balance(node p) {
 }
 
 node predecessor(node p) {
+    // Returns the inorder predecessor 
 
     while(p && p->rightChild) p = p->rightChild;
     return p;
@@ -138,6 +141,21 @@ node deleteRecord(node p, char *name) {
             p->rightChild = deleteRecord(p->rightChild, temp->name);
         }
     }
+    p->height = height(p);
+
+    if(balance(p) == 2 && balance(p->leftChild) == 1)
+        return llRotate(p);
+    else if(balance(p) == 2 && balance(p->leftChild) == 0)
+        return llRotate(p);
+    else if(balance(p) == 2 && balance(p->leftChild) == -1)
+        return lrRotate(p);
+    else if(balance(p) == -2 && balance(p->rightChild) == 1)
+        return rlRotate(p);  
+    else if(balance(p) == -2 && balance(p->rightChild) == 0)
+        return rrRotate(p);
+    else if(balance(p) == -2 && balance(p->rightChild) == -1)
+        return rrRotate(p);  
+  
     return p;
 }
 
