@@ -6,7 +6,7 @@
 
 extern node root;
 
-node createNode(){
+static node createNode(){
     node temp = (node)malloc(sizeof(struct Node));
     temp->leftChild = temp->rightChild = NULL;
     return temp;
@@ -115,7 +115,7 @@ void freeTree(node p){
     }
 }
 
-int calcHeight(node p) {
+static int calcHeight(node p) {
     // Move through subtrees till we hit null and 
     // count the height while returning.
     int left, right;
@@ -125,7 +125,7 @@ int calcHeight(node p) {
     return (left > right) ? left + 1 : right + 1;
 }
 
-int balance(node p) {
+static int balance(node p) {
     // Returns the difference between height of left and
     // right subtree.
     int left, right;
@@ -135,21 +135,21 @@ int balance(node p) {
     return left - right;
 }
 
-node predecessor(node p) {
+static node predecessor(node p) {
     // Returns the Inorder predecessor (the node which comes
     // after node p in an Inorder traversal).
     while(p && p->rightChild) p = p->rightChild;
     return p;
 }
 
-node successor(node p) {
+static node successor(node p) {
     // Returns the Inorder successor (the node which comes
     // before node p in an Inorder traversal).
     while(p && p->leftChild) p = p->leftChild;
     return p;
 }
 
-int height(node p) {
+static int height(node p) {
     int left, right;
     // If p is not null and there is a child, set variable to 
     // height of p's child, otherwise set height to 0.
@@ -180,7 +180,7 @@ The former p->left->right rotates to it's new p->right->left position.
 The same steps is taken for Right Right and Right Left rotation, but mirrored
 to their Left Left and Left Right counterparts. */
 
-node llRotate(node p) {
+static node llRotate(node p) {
    
     node p_l = p->leftChild;
     node p_lr = p_l->rightChild;
@@ -195,7 +195,7 @@ node llRotate(node p) {
     return p_l;  
 }
 
-node lrRotate(node p) { 
+static node lrRotate(node p) { 
     node p_l = p->leftChild;
     node p_lr = p_l->rightChild;
 
@@ -213,7 +213,7 @@ node lrRotate(node p) {
     return p_lr; 
 }
 
-node rrRotate(node p) {
+static node rrRotate(node p) {
     node p_r = p->rightChild;
     node p_rl = p_r->leftChild;
 
@@ -227,7 +227,7 @@ node rrRotate(node p) {
     return p_r;  
 }
 
-node rlRotate(node p) {
+static node rlRotate(node p) {
     node p_r = p->rightChild;
     node p_rl = p_r->leftChild;
 

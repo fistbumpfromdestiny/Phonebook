@@ -12,19 +12,19 @@ struct Node{
 
 typedef struct Node *node;
 
-struct Node * createNode();
-struct Node * llRotate(struct Node *p);
-struct Node * lrRotate(struct Node *p);
-struct Node * rlRotate(struct Node *p);
-struct Node * rrRotate(struct Node *p);
-struct Node * predecessor(struct Node *p);
-struct Node * successor(struct Node *p);
+void freeTree(struct Node *p);
+static int height(struct Node *p);
+static int calcHeight(struct Node *p);
+static int balance(struct Node *p);
+static struct Node * createNode();
+static struct Node * predecessor(struct Node *p);
+static struct Node * successor(struct Node *p);
+static struct Node * llRotate(struct Node *p);
+static struct Node * lrRotate(struct Node *p);
+static struct Node * rlRotate(struct Node *p);
+static struct Node * rrRotate(struct Node *p);
 struct Node * deleteRecord(struct Node *p, char *name);
 struct Node * insertNode(char *name, char *number,
                         struct Node *p);
-void freeTree(struct Node *p);
-int height(struct Node *p);
-int calcHeight(struct Node *p);
-int balance(struct Node *p);
 
 #endif  /* TREE_H_ */
