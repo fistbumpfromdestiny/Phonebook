@@ -4,7 +4,18 @@
 #include "main.h"
 #include "tree.h"
 
-extern node root;
+static int height(struct Node *p);
+static int calcHeight(struct Node *p);
+static int balance(struct Node *p);
+static struct Node * createNode();
+static struct Node * predecessor(struct Node *p);
+static struct Node * successor(struct Node *p);
+static struct Node * llRotate(struct Node *root, struct Node *p);
+static struct Node * lrRotate(struct Node *root, struct Node *p);
+static struct Node * rlRotate(struct Node *root, struct Node *p);
+static struct Node * rrRotate(struct Node *root, struct Node *p);
+
+//extern node root;
 
 static node createNode(){
     node temp = (node)malloc(sizeof(struct Node));
@@ -12,7 +23,7 @@ static node createNode(){
     return temp;
 }
 
-node insertNode(char *name, char *number, node p){
+node insertNode(char *name, char *number, node p, node root){
     // If root is NULL, create a new node and set it's
     // height to 1. 
     if(!p) { 
@@ -24,9 +35,9 @@ node insertNode(char *name, char *number, node p){
     }
 
     if(strcmp(name, p->name) < 0) 
-        p->leftChild = insertNode(name, number, p->leftChild);
+        p->leftChild = insertNode(name, number, p->leftChild, root);
     else if(strcmp(name, p->name) > 0)  
-        p->rightChild = insertNode(name, number, p->rightChild);
+        p->rightChild = insertNode(name, number, p->rightChild, root);
     // Updates the height of every node during return time. 
     // p's height will be equal to the greatest height of either
     // left or right subtree.
@@ -39,22 +50,22 @@ node insertNode(char *name, char *number, node p){
     // unbalanced on the left side of subtree and has to be 
     // rotated left -> left.
     if(balance(p) == 2 && balance(p->leftChild) == 1)
-        return llRotate(p);
+        return llRotate(root, p);
     // Balance of p == 2 and p->leftChild = -1 means it's 
     // unbalanced on the right side of the left subtree, so 
     // we rotate left -> right.
     else if(balance(p) == 2 && balance(p->leftChild) == -1)
-        return lrRotate(p);
+        return lrRotate(root, p);
     // Repeat balance checks, but for the right side of the tree.
     else if(balance(p) == -2 && balance(p->rightChild) == -1)
-        return rrRotate(p);  
+        return rrRotate(root, p);  
     else if(balance(p) == -2 && balance(p->rightChild) == -2)
-        return rlRotate(p);   
+        return rlRotate(root, p);   
 
     return p;
 }
 
-node deleteRecord(node p, char *name) {
+node deleteRecord(node root, node p, char *name) {
 
     if(!p) return NULL;
     if(!p->leftChild && !p->rightChild) {
@@ -64,9 +75,9 @@ node deleteRecord(node p, char *name) {
     }   
 
     if (strcmp(name, p->name) < 0) p->leftChild = 
-            deleteRecord(p->leftChild, name);
+            deleteRecord(root, p->leftChild, name);
     else if (strcmp(name, p->name) > 0) p->rightChild = 
-            deleteRecord(p->rightChild, name);
+            deleteRecord(root, p->rightChild, name);
     // Compare the height between the two (eventual) subtrees and let 
     // either the Inorder predecessor (rightmost child of left subtree) 
     // or successor (leftmost child of right subtree) take the deleted 
@@ -77,12 +88,12 @@ node deleteRecord(node p, char *name) {
             temp = predecessor(p->leftChild);
             strcpy(p->name, temp->name);
             strcpy(p->number, temp->number);
-            p->leftChild = deleteRecord(p->leftChild, temp->name);
+            p->leftChild = deleteRecord(root, p->leftChild, temp->name);
         } else {
             temp = successor(p->rightChild);
             strcpy(p->name, temp->name);
             strcpy(p->number, temp->number);
-            p->rightChild = deleteRecord(p->rightChild, temp->name);
+            p->rightChild = deleteRecord(root, p->rightChild, temp->name);
         }
     }
     
@@ -92,17 +103,17 @@ node deleteRecord(node p, char *name) {
     // if there is an imbalance.
 
     if(balance(p) == 2 && balance(p->leftChild) == 1)
-        return llRotate(p);
+        return llRotate(root, p);
     else if(balance(p) == 2 && balance(p->leftChild) == 0)
-        return llRotate(p);
+        return llRotate(root, p);
     else if(balance(p) == 2 && balance(p->leftChild) == -1)
-        return lrRotate(p);
+        return lrRotate(root, p);
     else if(balance(p) == -2 && balance(p->rightChild) == 1)
-        return rlRotate(p);  
+        return rlRotate(root, p);  
     else if(balance(p) == -2 && balance(p->rightChild) == 0)
-        return rrRotate(p);
+        return rrRotate(root, p);
     else if(balance(p) == -2 && balance(p->rightChild) == -1)
-        return rrRotate(p);  
+        return rrRotate(root, p);  
   
     return p;
 }
@@ -180,7 +191,7 @@ The former p->left->right rotates to it's new p->right->left position.
 The same steps is taken for Right Right and Right Left rotation, but mirrored
 to their Left Left and Left Right counterparts. */
 
-static node llRotate(node p) {
+static node llRotate(node root, node p) {
    
     node p_l = p->leftChild;
     node p_lr = p_l->rightChild;
@@ -195,7 +206,7 @@ static node llRotate(node p) {
     return p_l;  
 }
 
-static node lrRotate(node p) { 
+static node lrRotate(node root, node p) { 
     node p_l = p->leftChild;
     node p_lr = p_l->rightChild;
 
@@ -213,7 +224,7 @@ static node lrRotate(node p) {
     return p_lr; 
 }
 
-static node rrRotate(node p) {
+static node rrRotate(node root, node p) {
     node p_r = p->rightChild;
     node p_rl = p_r->leftChild;
 
@@ -227,7 +238,7 @@ static node rrRotate(node p) {
     return p_r;  
 }
 
-static node rlRotate(node p) {
+static node rlRotate(node root, node p) {
     node p_r = p->rightChild;
     node p_rl = p_r->leftChild;
 

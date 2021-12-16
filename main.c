@@ -6,12 +6,12 @@
 #include "tree.h"
 #include "io.h"
 
-//typedef struct Node *node;
-node root = NULL;
-bool isRight = false;
 
 int main(int argc, char **argv) {  
     
+    node root = NULL;
+    bool isRight = false;
+
     char name[50];
     char num[11];
     node temp;
@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
         if(name[0] != '\r' && name[0] != '\n'
         && num[0] != '\r' && num[0] != '\n')
         
-        root = insertNode(name, num, root);
+        root = insertNode(name, num, root, root);
       }
         fclose(file);   
     }
@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
                 fgets(num, 11, stdin);
                 if(num[0] == '\r' || num[0] == '\n') break;
                 num[strcspn(num, "\n")] = 0;
-                root = insertNode(name, num, root);
+                root = insertNode(name, num, root, root);
                 break;
             case(2):
                 printf("Printing records.\n");
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
             case(3):
                 printf("Enter name to search for: ");
                 fgets(name, 50, stdin);
-                temp = searchRecords(name); 
+                temp = searchRecords(name, root); 
                 if(temp) {
                     printf("Record found.\n");
                     printf("%s\n%s\n",temp->name, temp->number);
@@ -75,10 +75,10 @@ int main(int argc, char **argv) {
             case(4):
                 printf("Enter name to delete: ");
                 fgets(name, 50, stdin);
-                root = deleteRecord(root, name); 
+                root = deleteRecord(root, root, name); 
                 break;
             case(5):
-                printTree("", root, isRight);
+                printTree("", root, root, isRight);
                 break;
             case(6):
                 freeTree(root);

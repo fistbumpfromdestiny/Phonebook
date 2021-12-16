@@ -5,9 +5,6 @@
 #include "tree.h"
 #include "io.h"
 
-extern node root;
-extern bool isRight;
-
 void printInorder(node p){ 
     if(p){
         printInorder(p->leftChild);
@@ -17,7 +14,7 @@ void printInorder(node p){
     }
 }
 
-node searchRecords(char *name) {
+node searchRecords(char *name, node root) {
 
     node temp = root;
     
@@ -29,7 +26,7 @@ node searchRecords(char *name) {
     return NULL;
 }
 
-void printTree(char *indentation, node p, bool isRight) {
+void printTree(char *indentation, node p, node root, bool isRight) {
 
     if(!p) {
         printf("%s", indentation);
@@ -45,8 +42,8 @@ void printTree(char *indentation, node p, bool isRight) {
     // Concatenates indentation and result of ternary operation into 
     // newstring
     sprintf(newindent, "%s%s", indentation, (isRight ? "│  " : " "));
-    printTree(newindent, p->rightChild, true);
-    printTree(newindent, p->leftChild, false);
+    printTree(newindent, p->rightChild, root, true);
+    printTree(newindent, p->leftChild, root, false);
    
     free(newindent);
     }
