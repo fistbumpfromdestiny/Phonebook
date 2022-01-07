@@ -15,8 +15,6 @@ static struct Node * lrRotate(struct Node *root, struct Node *p);
 static struct Node * rlRotate(struct Node *root, struct Node *p);
 static struct Node * rrRotate(struct Node *root, struct Node *p);
 
-//extern node root;
-
 static node createNode(){
     node temp = (node)malloc(sizeof(struct Node));
     temp->leftChild = temp->rightChild = NULL;
