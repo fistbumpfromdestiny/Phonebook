@@ -217,8 +217,7 @@ static node lrRotate(node root, node p) {
     p_l->height = height(p_l);
     p_lr->height = height(p_lr);
 
-    if(root == p) 
-        root = p_lr;
+    if(root == p) root = p_lr;
     return p_lr; 
 }
 
